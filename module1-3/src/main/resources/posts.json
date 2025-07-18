@@ -1,0 +1,68 @@
+[
+  {
+    "title": "t1",
+    "content": "c1",
+    "postLabels": [
+      {
+        "name": "TEST1",
+        "id": 1,
+        "status": "ACTIVE"
+      }
+    ],
+    "id": 1,
+    "status": "DELETED"
+  },
+  {
+    "title": "title2",
+    "content": "content2",
+    "postLabels": [
+      {
+        "name": "TEST1",
+        "id": 1,
+        "status": "ACTIVE"
+      },
+      {
+        "name": "Name3",
+        "id": 3,
+        "status": "ACTIVE"
+      },
+      {
+        "name": "Name3",
+        "id": 4,
+        "status": "ACTIVE"
+      }
+    ],
+    "id": 2,
+    "status": "ACTIVE"
+  },
+  {
+    "title": "newTitleFor3",
+    "content": "c2",
+    "postLabels": [
+      {
+        "name": "TEST1",
+        "id": 1,
+        "status": "ACTIVE"
+      },
+      {
+        "name": "Name2",
+        "id": 2,
+        "status": "ACTIVE"
+      },
+      {
+        "name": "Name3",
+        "id": 3,
+        "status": "ACTIVE"
+      }
+    ],
+    "id": 3,
+    "status": "ACTIVE"
+  },
+  {
+    "title": "newTitleFromWriter",
+    "content": "content3",
+    "postLabels": [],
+    "id": 4,
+    "status": "ACTIVE"
+  }
+]

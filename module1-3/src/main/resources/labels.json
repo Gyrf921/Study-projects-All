@@ -1,0 +1,47 @@
+[
+  {
+    "name": "TEST1",
+    "id": 1,
+    "status": "ACTIVE"
+  },
+  {
+    "name": "Name2",
+    "id": 2,
+    "status": "ACTIVE"
+  },
+  {
+    "name": "Name3",
+    "id": 3,
+    "status": "ACTIVE"
+  },
+  {
+    "name": "Name3",
+    "id": 4,
+    "status": "ACTIVE"
+  },
+  {
+    "name": "five",
+    "id": 5,
+    "status": "ACTIVE"
+  },
+  {
+    "name": "six",
+    "id": 6,
+    "status": "ACTIVE"
+  },
+  {
+    "name": "UpdateWithoutId-Second",
+    "id": 7,
+    "status": "DELETED"
+  },
+  {
+    "name": "name9",
+    "id": 8,
+    "status": "DELETED"
+  },
+  {
+    "name": "newLabel",
+    "id": 9,
+    "status": "ACTIVE"
+  }
+]
