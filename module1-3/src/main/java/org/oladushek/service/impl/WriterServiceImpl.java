@@ -1,39 +1,45 @@
 package org.oladushek.service.impl;
 
-import org.oladushek.model.Writer;
+import lombok.AllArgsConstructor;
+import org.oladushek.model.entity.WriterEntity;
 import org.oladushek.repository.WriterRepository;
 import org.oladushek.repository.impl.WriterRepositoryImpl;
 import org.oladushek.service.WriterService;
 
 import java.util.List;
 
+@AllArgsConstructor
 public class WriterServiceImpl implements WriterService {
 
-    private final WriterRepository writerRepository = new WriterRepositoryImpl();
+    private final WriterRepository writerRepository;
+
+    public WriterServiceImpl(){
+        writerRepository = new WriterRepositoryImpl();
+    }
 
     @Override
-    public Writer getById(Long id) {
+    public WriterEntity getById(Long id) {
         return writerRepository.findById(id);
     }
 
     @Override
-    public List<Writer> getAll() {
+    public List<WriterEntity> getAll() {
         return writerRepository.findAll();
     }
 
     @Override
-    public Writer create(Writer writer) {
-        return writerRepository.save(writer);
+    public WriterEntity create(WriterEntity writerEntity) {
+        return writerRepository.save(writerEntity);
     }
 
     @Override
-    public Writer update(Writer writer) {
-        if (writerRepository.findById(writer.getId()) != null) {
-            return writerRepository.update(writer);
+    public WriterEntity update(WriterEntity writerEntity) {
+        if (writerRepository.findById(writerEntity.getId()) != null) {
+            return writerRepository.update(writerEntity);
         }
         else {
-            System.out.println("Writer " + writer.getId() + " not found. Try to create new writer.");
-            return writerRepository.save(writer);
+            System.out.println("Writer " + writerEntity.getId() + " not found. Try to create new writer.");
+            return writerRepository.save(writerEntity);
         }
     }
 

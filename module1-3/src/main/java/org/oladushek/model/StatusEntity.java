@@ -5,10 +5,11 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-@Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class BaseEntity {
-    private Long id;
+@Data
+public class StatusEntity extends BaseEntity{
 
+    @ToString.Exclude
+    private Status status;
 }

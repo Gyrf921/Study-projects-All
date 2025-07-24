@@ -1,7 +1,7 @@
 package org.oladushek.service;
 
-import org.oladushek.model.Label;
+import org.oladushek.model.entity.LabelEntity;
 
-public interface LabelService extends GenericService<Label, Long>{
+public interface LabelService extends GenericService<LabelEntity, Long>{
 
 }

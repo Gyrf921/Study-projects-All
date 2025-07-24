@@ -2,10 +2,9 @@ package org.oladushek.controller;
 
 import lombok.AllArgsConstructor;
 import org.oladushek.controller.dto.PostDTO;
-import org.oladushek.controller.dto.mapper.LabelMapper;
 import org.oladushek.controller.dto.mapper.PostMapper;
-import org.oladushek.model.Label;
-import org.oladushek.model.Post;
+import org.oladushek.model.entity.LabelEntity;
+import org.oladushek.model.entity.PostEntity;
 import org.oladushek.service.LabelService;
 import org.oladushek.service.PostService;
 import org.oladushek.service.impl.LabelServiceImpl;
@@ -46,8 +45,8 @@ public class PostController {
     }
 
     public PostDTO create(String title, String content, List<Long> labelsIdForNewPost) {
-        List<Label> selectedLabels = getSelectedLabelByIdForPost(labelsIdForNewPost);
-        return mapper.mapToDTO(postService.create(new Post(title, content, selectedLabels)));
+        List<LabelEntity> selectedLabelEntities = getSelectedLabelByIdForPost(labelsIdForNewPost);
+        return mapper.mapToDTO(postService.create(new PostEntity(title, content, selectedLabelEntities)));
     }
 
     public void delete(Long id) {
@@ -55,17 +54,17 @@ public class PostController {
     }
 
     public PostDTO update(Long id, String newTitle, String newContent, List<Long> labelsId) {
-        Post oldPost = postService.getById(id);
-        Post newPost = new Post(id,
-                newTitle.equals("exit") ? oldPost.getTitle() : newTitle,
-                newContent.equals("exit") ? oldPost.getContent() : newContent,
+        PostEntity oldPostEntity = postService.getById(id);
+        PostEntity newPostEntity = new PostEntity(id,
+                newTitle.equals("exit") ? oldPostEntity.getTitle() : newTitle,
+                newContent.equals("exit") ? oldPostEntity.getContent() : newContent,
                 labelsId.isEmpty() ? Collections.emptyList() : getSelectedLabelByIdForPost(labelsId));
 
-        return mapper.mapToDTO(postService.update(newPost));
+        return mapper.mapToDTO(postService.update(newPostEntity));
     }
 
-    private List<Label> getSelectedLabelByIdForPost(List<Long> labelsIdForNewPost) {
-        Predicate<Label> isSelected = (label) -> labelsIdForNewPost.stream()
+    private List<LabelEntity> getSelectedLabelByIdForPost(List<Long> labelsIdForNewPost) {
+        Predicate<LabelEntity> isSelected = (label) -> labelsIdForNewPost.stream()
                 .filter(selectedId -> label.getId().equals(selectedId))
                 .findAny().orElse(null) != null;
 

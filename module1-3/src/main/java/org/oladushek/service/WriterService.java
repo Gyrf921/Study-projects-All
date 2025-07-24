@@ -1,6 +1,6 @@
 package org.oladushek.service;
 
-import org.oladushek.model.Writer;
+import org.oladushek.model.entity.WriterEntity;
 
-public interface WriterService extends GenericService<Writer, Long>{
+public interface WriterService extends GenericService<WriterEntity, Long>{
 }

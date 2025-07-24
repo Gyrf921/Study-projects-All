@@ -12,23 +12,20 @@
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <org.projectlombok.version>1.18.38</org.projectlombok.version>
+        <com.google.code.gson.version>2.13.1</com.google.code.gson.version>
     </properties>
     <dependencies>
-        <!-- REPOSITORY -->
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
-            <version>2.13.1</version>
+            <version>${com.google.code.gson.version}</version>
         </dependency>
 
-
-        <!-- CODE GENERATOR -->
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.18.38</version>
+            <version>${org.projectlombok.version}</version>
         </dependency>
-
-
     </dependencies>
 </project>

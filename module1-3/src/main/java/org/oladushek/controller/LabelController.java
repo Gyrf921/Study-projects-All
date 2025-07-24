@@ -1,7 +1,7 @@
 package org.oladushek.controller;
 
 import lombok.AllArgsConstructor;
-import org.oladushek.model.Label;
+import org.oladushek.model.entity.LabelEntity;
 import org.oladushek.service.LabelService;
 import org.oladushek.controller.dto.LabelDTO;
 import org.oladushek.controller.dto.mapper.LabelMapper;
@@ -31,11 +31,11 @@ public class LabelController {
     }
 
     public LabelDTO create(String name){
-        return mapper.mapToDTO(labelService.create(new Label(name)));
+        return mapper.mapToDTO(labelService.create(new LabelEntity(name)));
     }
 
     public LabelDTO update(Long id, String newName) {
-        return mapper.mapToDTO(labelService.update(new Label(id, newName)));
+        return mapper.mapToDTO(labelService.update(new LabelEntity(id, newName)));
     }
 
     public void delete(Long id) {

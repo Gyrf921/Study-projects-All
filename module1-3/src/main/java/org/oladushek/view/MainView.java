@@ -20,6 +20,10 @@ public class MainView {
     }
 
     public void startProgram() {
+        WriterView writerView = new WriterView(labelController, postController, writerController, scanner);
+        PostView postView = new PostView(labelController, postController, scanner);
+        LabelView labelView = new LabelView(labelController, scanner);
+
         boolean running = true;
         while (running) {
             System.out.println("\nTake entity for work CRUD:");
@@ -30,9 +34,9 @@ public class MainView {
 
             String choice = scanner.nextLine();
             switch (choice) {
-                case "1" -> new WriterView(labelController, postController, writerController, scanner).handle();
-                case "2" -> new PostView(labelController, postController, scanner).handle();
-                case "3" -> new LabelView(labelController, scanner).handle();
+                case "1" -> writerView.handle();
+                case "2" -> postView.handle();
+                case "3" -> labelView.handle();
                 case "4" -> running = false;
                 default -> System.out.println("Invalid input.");
             }

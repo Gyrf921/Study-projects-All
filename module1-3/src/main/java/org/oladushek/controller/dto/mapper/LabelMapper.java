@@ -1,17 +1,17 @@
 package org.oladushek.controller.dto.mapper;
 
 import org.oladushek.controller.dto.LabelDTO;
-import org.oladushek.model.Label;
+import org.oladushek.model.entity.LabelEntity;
 
-public class LabelMapper implements GenericMapper<Label, LabelDTO> {
+public class LabelMapper implements GenericMapper<LabelEntity, LabelDTO> {
 
     @Override
-    public LabelDTO mapToDTO(Label l) {
+    public LabelDTO mapToDTO(LabelEntity l) {
         return new LabelDTO(l.getId(), l.getName());
     }
 
     @Override
-    public Label mapToEntity(LabelDTO labelDTO) {
-        return new Label(labelDTO.id(), labelDTO.name());
+    public LabelEntity mapToEntity(LabelDTO labelDTO) {
+        return new LabelEntity(labelDTO.id(), labelDTO.name());
     }
 }

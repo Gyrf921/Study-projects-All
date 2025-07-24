@@ -3,8 +3,8 @@ package org.oladushek.controller;
 import lombok.AllArgsConstructor;
 import org.oladushek.controller.dto.WriterDTO;
 import org.oladushek.controller.dto.mapper.WriterMapper;
-import org.oladushek.model.Post;
-import org.oladushek.model.Writer;
+import org.oladushek.model.entity.PostEntity;
+import org.oladushek.model.entity.WriterEntity;
 import org.oladushek.service.PostService;
 import org.oladushek.service.WriterService;
 import org.oladushek.service.impl.PostServiceImpl;
@@ -36,11 +36,11 @@ public class WriterController {
     }
 
     public WriterDTO createWithPosts(String firstName, String lastName, List<Long> postsId) {
-        return mapper.mapToDTO(writerService.create(new Writer(firstName, lastName, getSelectedPostByIdForWriter(postsId))));
+        return mapper.mapToDTO(writerService.create(new WriterEntity(firstName, lastName, getSelectedPostByIdForWriter(postsId))));
     }
 
     public WriterDTO createWithoutPosts(String firstName, String lastName) {
-        return mapper.mapToDTO(writerService.create(new Writer(firstName, lastName)));
+        return mapper.mapToDTO(writerService.create(new WriterEntity(firstName, lastName)));
     }
 
     public void delete(Long id) {
@@ -48,23 +48,23 @@ public class WriterController {
     }
 
     public WriterDTO update(Long id, String firstName, String lastName, List<Long> postsId) {
-        Writer oldWriter = writerService.getById(id);
-        Writer newWriter = new Writer(id,
-                firstName.equals("exit") ? oldWriter.getFirstName() : firstName,
-                lastName.equals("exit") ? oldWriter.getLastName() : lastName,
+        WriterEntity oldWriterEntity = writerService.getById(id);
+        WriterEntity writerEntity = new WriterEntity(id,
+                firstName.equals("exit") ? oldWriterEntity.getFirstName() : firstName,
+                lastName.equals("exit") ? oldWriterEntity.getLastName() : lastName,
                 postsId.isEmpty() ? Collections.emptyList() : getSelectedPostByIdForWriter(postsId));
 
-        return mapper.mapToDTO(writerService.update(newWriter));
+        return mapper.mapToDTO(writerService.update(writerEntity));
     }
 
     public WriterDTO addNewPost(Long id, Long postId) {
-        Writer oldWriter = writerService.getById(id);
-        oldWriter.getPosts().add(postService.getById(postId));
-        return mapper.mapToDTO(writerService.update(oldWriter));
+        WriterEntity oldWriterEntity = writerService.getById(id);
+        oldWriterEntity.getPostEntities().add(postService.getById(postId));
+        return mapper.mapToDTO(writerService.update(oldWriterEntity));
     }
 
-    private List<Post> getSelectedPostByIdForWriter(List<Long> postsIdForNewWriter) {
-        Predicate<Post> isSelected = (post) -> postsIdForNewWriter.stream()
+    private List<PostEntity> getSelectedPostByIdForWriter(List<Long> postsIdForNewWriter) {
+        Predicate<PostEntity> isSelected = (post) -> postsIdForNewWriter.stream()
                 .filter(selectedId -> post.getId().equals(selectedId))
                 .findAny().orElse(null) != null;
 
