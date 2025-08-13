@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <preConditions>
+        <dbms type="mysql"/>
+    </preConditions>
+
+    <changeSet id="10.08.2025-init-database" author="oladushek">
+        <tagDatabase tag="v-1.0.0"/>
+    </changeSet>
+    <include file="v-1.0.0/10.08.2025-changelog-v.1.0.0.xml" relativeToChangelogFile="true"/>
+</databaseChangeLog>
