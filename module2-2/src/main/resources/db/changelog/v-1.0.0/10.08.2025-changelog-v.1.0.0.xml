@@ -6,7 +6,7 @@
 
 
     <include file="create-table-label.xml" relativeToChangelogFile="true"/>
+    <include file="create-table-writer.xml" relativeToChangelogFile="true"/>
     <include file="create-table-post.xml" relativeToChangelogFile="true"/>
     <include file="create-table-post-label.xml" relativeToChangelogFile="true"/>
-    <include file="create-table-writer.xml" relativeToChangelogFile="true"/>
 </databaseChangeLog>

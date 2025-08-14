@@ -1,14 +1,14 @@
 package org.oladushek.entity.base;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
-@Data
+
 @AllArgsConstructor
 @NoArgsConstructor
+@Getter
+@Setter
 public abstract class UpdatedEntity extends BaseEntity {
     private LocalDateTime created;
     private LocalDateTime updated;

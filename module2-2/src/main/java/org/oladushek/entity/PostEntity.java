@@ -1,6 +1,7 @@
 package org.oladushek.entity;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.oladushek.controller.dto.PostDTO;
 import org.oladushek.entity.base.BaseEntity;
@@ -12,6 +13,7 @@ import java.util.List;
 
 @Data
 @NoArgsConstructor
+@EqualsAndHashCode(callSuper=false)
 public class PostEntity extends UpdatedEntity {
     private String content;
     private List<LabelEntity> postLabelEntities;

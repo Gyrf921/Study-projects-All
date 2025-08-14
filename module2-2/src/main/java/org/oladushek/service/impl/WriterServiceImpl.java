@@ -1,5 +1,6 @@
 package org.oladushek.service.impl;
 
+import lombok.AllArgsConstructor;
 import org.oladushek.entity.WriterEntity;
 import org.oladushek.repository.WriterRepository;
 import org.oladushek.repository.impl.WriterRepositoryImpl;
@@ -7,6 +8,7 @@ import org.oladushek.service.WriterService;
 
 import java.util.List;
 
+@AllArgsConstructor
 public class WriterServiceImpl implements WriterService {
 
     private final WriterRepository writerRepository;

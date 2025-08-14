@@ -1,56 +1,96 @@
 package org.oladushek.repository.impl;
 
-import com.mysql.cj.jdbc.ConnectionImpl;
-import org.oladushek.config.DbConnectConfig;
+import org.oladushek.config.StatementProvider;
 import org.oladushek.entity.LabelEntity;
 import org.oladushek.repository.LabelRepository;
 
-import java.sql.*;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.List;
-
-import static org.oladushek.config.DbConnectConfig.*;
 
 public class LabelRepositoryImpl implements LabelRepository {
 
-
     @Override
     public LabelEntity findById(Long aLong) {
-        Connection connection = null;
-        Statement statement = null;
-
-        try {
-            Class.forName(JDBC_DRIVER);
-            connection = DriverManager.getConnection(DATABASE_URL, USER, PASSWORD);
-            statement = connection.createStatement();
-
-            ResultSet resultSet = statement.executeQuery("SELECT * FROM labels");
-
+        try(PreparedStatement ps = StatementProvider.getPreparedStatement("SELECT * FROM labels where id = ?")) {
+            ps.setLong(1, aLong);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                LabelEntity labelEntity = new LabelEntity();
+                labelEntity.setId(rs.getLong("id"));
+                labelEntity.setName(rs.getString("name"));
+                return labelEntity;
+            }
         }
-        catch (ClassNotFoundException | SQLException e) {
-            e.printStackTrace();
+        catch (SQLException e) {
+            System.out.println("Problem with SQL query: " + e.getMessage());
         }
-
-
         return null;
     }
 
     @Override
     public List<LabelEntity> findAll() {
-        return List.of();
+        List<LabelEntity> labelEntities = new ArrayList<>();
+        try(Statement st = StatementProvider.getStatement()) {
+            ResultSet rs = st.executeQuery("SELECT * FROM labels");
+            while (rs.next()) {
+                LabelEntity entity = new LabelEntity();
+                entity.setId(rs.getLong("id"));
+                entity.setName(rs.getString("name"));
+                labelEntities.add(entity);
+            }
+        }
+        catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return labelEntities;
     }
 
     @Override
     public LabelEntity save(LabelEntity labelEntity) {
+        try(PreparedStatement ps = StatementProvider.getPreparedStatement("INSERT INTO labels (name) VALUES (?)")) {
+            ps.setString(1, labelEntity.getName());
+            ps.executeUpdate();
+
+            //FIXME костыль тот ещё
+            return new LabelEntity((long) findAll().size(), labelEntity.getName());
+        }
+        catch (SQLException e) {
+            System.out.println("Problem with SQL query: " + e.getMessage());
+        }
         return null;
     }
 
     @Override
     public LabelEntity update(LabelEntity labelEntity) {
+        try(PreparedStatement ps = StatementProvider.getPreparedStatement("UPDATE labels SET name ? where id = ?")) {
+            ps.setString(1, labelEntity.getName());
+            ps.setLong(2, labelEntity.getId());
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                LabelEntity entity = new LabelEntity();
+                entity.setId(rs.getLong("id"));
+                entity.setName(rs.getString("name"));
+                return entity;
+            }
+        }
+        catch (SQLException e) {
+            System.out.println("Problem with SQL query: " + e.getMessage());
+        }
         return null;
     }
 
     @Override
     public void deleteById(Long aLong) {
-
+        try(PreparedStatement ps = StatementProvider.getPreparedStatement("DELETE FROM labels WHERE id = ?")) {
+            ps.setLong(1, aLong);
+            ps.executeUpdate();
+        }
+        catch (SQLException e) {
+            System.out.println("Problem with SQL query: " + e.getMessage());
+        }
     }
 }

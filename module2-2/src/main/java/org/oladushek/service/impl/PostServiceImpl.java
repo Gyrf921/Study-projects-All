@@ -1,5 +1,6 @@
 package org.oladushek.service.impl;
 
+import lombok.AllArgsConstructor;
 import org.oladushek.entity.PostEntity;
 import org.oladushek.repository.PostRepository;
 import org.oladushek.repository.impl.PostRepositoryImpl;
@@ -7,6 +8,7 @@ import org.oladushek.service.PostService;
 
 import java.util.List;
 
+@AllArgsConstructor
 public class PostServiceImpl implements PostService {
 
     private final PostRepository postRepository;

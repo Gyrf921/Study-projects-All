@@ -6,14 +6,14 @@
 
     <changeSet id="create-table-post" author="oladushek">
         <sql>
-            CREATE TABLE IF NOT EXISTS post (
+            CREATE TABLE IF NOT EXISTS posts (
                 id BIGINT AUTO_INCREMENT PRIMARY KEY,
                 content TEXT NOT NULL,
                 status ENUM('ACTIVE', 'UNDER_REVIEW', 'DELETED') NOT NULL,
                 created DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
                 updated DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
                 writer_id BIGINT NOT NULL,
-                CONSTRAINT fk_post_writer FOREIGN KEY (writer_id) REFERENCES writer(id) ON DELETE CASCADE
+                CONSTRAINT fk_post_writer FOREIGN KEY (writer_id) REFERENCES writers(id) ON DELETE CASCADE
             );
         </sql>
     </changeSet>
