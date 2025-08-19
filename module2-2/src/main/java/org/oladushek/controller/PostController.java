@@ -1,8 +1,8 @@
 package org.oladushek.controller;
 
 import lombok.AllArgsConstructor;
-import org.oladushek.controller.dto.PostDTO;
-import org.oladushek.controller.dto.mapper.PostMapper;
+import org.oladushek.dto.PostDTO;
+import org.oladushek.mapper.PostMapper;
 import org.oladushek.entity.LabelEntity;
 import org.oladushek.entity.PostEntity;
 import org.oladushek.service.LabelService;
@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.function.Predicate;
 
 @AllArgsConstructor
-public class PostController implements GenericController<PostDTO, Long> {
+public class PostController {
 
     private final PostMapper mapper;
     private final LabelService labelService;
@@ -27,12 +27,12 @@ public class PostController implements GenericController<PostDTO, Long> {
         this.postService = new PostServiceImpl();
     }
 
-    @Override
+
     public PostDTO getById(Long id) {
         return mapper.mapToDTO(postService.getById(id));
     }
 
-    @Override
+
     public List<PostDTO> getAll() {
         return postService.getAll().stream()
                 .map(mapper::mapToDTO)
@@ -59,7 +59,7 @@ public class PostController implements GenericController<PostDTO, Long> {
         return mapper.mapToDTO(postService.update(newPostEntity));
     }
 
-    @Override
+
     public void delete(Long id) {
         postService.delete(id);
     }

@@ -8,11 +8,13 @@ import org.oladushek.service.WriterService;
 
 import java.util.List;
 
-@AllArgsConstructor
 public class WriterServiceImpl implements WriterService {
 
     private final WriterRepository writerRepository;
 
+    public WriterServiceImpl(WriterRepository writerRepository) {
+        this.writerRepository = writerRepository;
+    }
     public WriterServiceImpl(){
         writerRepository = new WriterRepositoryImpl();
     }

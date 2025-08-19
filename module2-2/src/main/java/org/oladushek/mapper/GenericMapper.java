@@ -1,4 +1,4 @@
-package org.oladushek.controller.dto.mapper;
+package org.oladushek.mapper;
 
 public interface GenericMapper<ENTITY, DTO> {
     DTO mapToDTO(ENTITY entity);

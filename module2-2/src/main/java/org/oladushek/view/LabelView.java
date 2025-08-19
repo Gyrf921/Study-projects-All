@@ -2,7 +2,7 @@ package org.oladushek.view;
 
 import lombok.AllArgsConstructor;
 import org.oladushek.controller.LabelController;
-import org.oladushek.controller.dto.LabelDTO;
+import org.oladushek.dto.LabelDTO;
 
 import java.util.List;
 import java.util.Scanner;

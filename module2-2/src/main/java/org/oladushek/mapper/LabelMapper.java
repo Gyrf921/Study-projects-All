@@ -1,6 +1,6 @@
-package org.oladushek.controller.dto.mapper;
+package org.oladushek.mapper;
 
-import org.oladushek.controller.dto.LabelDTO;
+import org.oladushek.dto.LabelDTO;
 import org.oladushek.entity.LabelEntity;
 
 public class LabelMapper implements GenericMapper<LabelEntity, LabelDTO> {

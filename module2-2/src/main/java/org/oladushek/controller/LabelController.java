@@ -1,15 +1,15 @@
 package org.oladushek.controller;
 
 import lombok.AllArgsConstructor;
-import org.oladushek.controller.dto.LabelDTO;
-import org.oladushek.controller.dto.mapper.LabelMapper;
+import org.oladushek.dto.LabelDTO;
+import org.oladushek.mapper.LabelMapper;
 import org.oladushek.entity.LabelEntity;
 import org.oladushek.service.impl.LabelServiceImpl;
 
 import java.util.List;
 
 @AllArgsConstructor
-public class LabelController implements GenericController<LabelDTO, Long> {
+public class LabelController {
 
     private final LabelServiceImpl labelService;
     private final LabelMapper labelMapper;
@@ -19,12 +19,12 @@ public class LabelController implements GenericController<LabelDTO, Long> {
         this.labelService = new LabelServiceImpl();
     }
 
-    @Override
+
     public LabelDTO getById(Long id) {
         return labelMapper.mapToDTO(labelService.getById(id));
     }
 
-    @Override
+
     public List<LabelDTO> getAll() {
         return labelService.getAll().stream()
                 .map(labelMapper::mapToDTO)
@@ -39,7 +39,7 @@ public class LabelController implements GenericController<LabelDTO, Long> {
         return labelMapper.mapToDTO(labelService.update(new LabelEntity(id, newName)));
     }
 
-    @Override
+
     public void delete(Long id) {
         labelService.delete(id);
     }

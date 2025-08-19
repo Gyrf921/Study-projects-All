@@ -1,6 +1,6 @@
-package org.oladushek.controller.dto.mapper;
+package org.oladushek.mapper;
 
-import org.oladushek.controller.dto.WriterDTO;
+import org.oladushek.dto.WriterDTO;
 import org.oladushek.entity.WriterEntity;
 
 public class WriterMapper implements GenericMapper<WriterEntity, WriterDTO>{

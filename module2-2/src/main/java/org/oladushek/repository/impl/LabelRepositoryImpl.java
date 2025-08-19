@@ -1,6 +1,6 @@
 package org.oladushek.repository.impl;
 
-import org.oladushek.config.StatementProvider;
+import org.oladushek.config.StatementProviderUtils;
 import org.oladushek.entity.LabelEntity;
 import org.oladushek.repository.LabelRepository;
 
@@ -15,7 +15,7 @@ public class LabelRepositoryImpl implements LabelRepository {
 
     @Override
     public LabelEntity findById(Long aLong) {
-        try(PreparedStatement ps = StatementProvider.getPreparedStatement("SELECT * FROM labels where id = ?")) {
+        try(PreparedStatement ps = StatementProviderUtils.getPreparedStatement("SELECT * FROM labels where id = ?")) {
             ps.setLong(1, aLong);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
@@ -34,7 +34,7 @@ public class LabelRepositoryImpl implements LabelRepository {
     @Override
     public List<LabelEntity> findAll() {
         List<LabelEntity> labelEntities = new ArrayList<>();
-        try(Statement st = StatementProvider.getStatement()) {
+        try(Statement st = StatementProviderUtils.getStatement()) {
             ResultSet rs = st.executeQuery("SELECT * FROM labels");
             while (rs.next()) {
                 LabelEntity entity = new LabelEntity();
@@ -51,7 +51,7 @@ public class LabelRepositoryImpl implements LabelRepository {
 
     @Override
     public LabelEntity save(LabelEntity labelEntity) {
-        try(PreparedStatement ps = StatementProvider.getPreparedStatement("INSERT INTO labels (name) VALUES (?)")) {
+        try(PreparedStatement ps = StatementProviderUtils.getPreparedStatement("INSERT INTO labels (name) VALUES (?)")) {
             ps.setString(1, labelEntity.getName());
             ps.executeUpdate();
 
@@ -66,7 +66,7 @@ public class LabelRepositoryImpl implements LabelRepository {
 
     @Override
     public LabelEntity update(LabelEntity labelEntity) {
-        try(PreparedStatement ps = StatementProvider.getPreparedStatement("UPDATE labels SET name ? where id = ?")) {
+        try(PreparedStatement ps = StatementProviderUtils.getPreparedStatement("UPDATE labels SET name ? where id = ?")) {
             ps.setString(1, labelEntity.getName());
             ps.setLong(2, labelEntity.getId());
             ResultSet rs = ps.executeQuery();
@@ -85,9 +85,9 @@ public class LabelRepositoryImpl implements LabelRepository {
 
     @Override
     public void deleteById(Long aLong) {
-        try(PreparedStatement ps = StatementProvider.getPreparedStatement("DELETE FROM labels WHERE id = ?")) {
+        try(PreparedStatement ps = StatementProviderUtils.getPreparedStatement("DELETE FROM labels WHERE id = ?")) {
             ps.setLong(1, aLong);
-            ps.executeUpdate();
+            ps.execute();
         }
         catch (SQLException e) {
             System.out.println("Problem with SQL query: " + e.getMessage());

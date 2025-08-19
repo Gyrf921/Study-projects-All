@@ -3,7 +3,7 @@ package org.oladushek.view;
 import lombok.AllArgsConstructor;
 import org.oladushek.controller.LabelController;
 import org.oladushek.controller.PostController;
-import org.oladushek.controller.dto.PostDTO;
+import org.oladushek.dto.PostDTO;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -3,8 +3,6 @@ package org.oladushek.entity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import org.oladushek.controller.dto.PostDTO;
-import org.oladushek.entity.base.BaseEntity;
 import org.oladushek.entity.base.UpdatedEntity;
 import org.oladushek.entity.enums.PostStatus;
 

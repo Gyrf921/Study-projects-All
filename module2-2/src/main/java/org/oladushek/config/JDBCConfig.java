@@ -9,18 +9,22 @@ import liquibase.database.jvm.JdbcConnection;
 import liquibase.exception.DatabaseException;
 import liquibase.exception.LiquibaseException;
 import liquibase.resource.ClassLoaderResourceAccessor;
+import lombok.AllArgsConstructor;
+import lombok.Value;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
+@AllArgsConstructor
 public class JDBCConfig {
     private static volatile Connection connection;
-    private static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";
-    private static final String DATABASE_URL = "jdbc:mysql://localhost:3306/module22db";
-    private static final String USER = "user";
-    private static final String PASSWORD = "user";
-    
+
+    private static final String JDBC_DRIVER = "db.JDBC_DRIVER";
+    private static final String DATABASE_URL= "db.DATABASE_URL";
+    private static final String USER= "db.USER";
+    private static final String PASSWORD = "db.PASSWORD";
+
     public static Connection getConnection() {
         Connection localConnection = connection;
         if (localConnection == null) {
@@ -28,22 +32,12 @@ public class JDBCConfig {
                 localConnection = connection;
                 if (localConnection == null) {
                     try {
-                        localConnection = connection = DriverManager.getConnection(DATABASE_URL, USER, PASSWORD);
-
-                        Database database = DatabaseFactory.getInstance()
-                                .findCorrectDatabaseImplementation(new JdbcConnection(localConnection));
-                        Liquibase liquibase = new Liquibase(
-                                "db/changelog/db.changelog-master.xml",
-                                new ClassLoaderResourceAccessor(),
-                                database
-                        );
-                        liquibase.update(new Contexts(), new LabelExpression());
+                        localConnection = connection = DriverManager.getConnection(
+                                PropertiesConfig.getProperty(DATABASE_URL),
+                                PropertiesConfig.getProperty(USER),
+                                PropertiesConfig.getProperty(PASSWORD));
                     }catch (SQLException e) {
-                        System.out.println("Problem with JDBC connection: " + e.getMessage());
-                    } catch (DatabaseException e) {
-                        System.out.println("Problem with Database: " + e.getMessage());
-                    } catch (LiquibaseException e) {
-                        System.out.println("Problem with Liquibase: " + e.getMessage());
+                        System.exit(-1);
                     }
                 }
             }

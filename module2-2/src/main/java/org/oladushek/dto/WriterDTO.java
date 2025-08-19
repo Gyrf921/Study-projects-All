@@ -1,4 +1,4 @@
-package org.oladushek.controller.dto;
+package org.oladushek.dto;
 
 import org.oladushek.entity.PostEntity;
 

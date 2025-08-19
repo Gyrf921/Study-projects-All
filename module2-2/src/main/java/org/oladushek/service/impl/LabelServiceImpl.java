@@ -1,6 +1,9 @@
 package org.oladushek.service.impl;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.oladushek.entity.LabelEntity;
 import org.oladushek.repository.LabelRepository;
 import org.oladushek.repository.impl.LabelRepositoryImpl;
@@ -8,12 +11,15 @@ import org.oladushek.service.LabelService;
 
 import java.util.List;
 
-@AllArgsConstructor
 public class LabelServiceImpl implements LabelService {
+
     private final LabelRepository labelRepository;
 
+    public LabelServiceImpl(LabelRepository labelRepository) {
+        this.labelRepository = labelRepository;
+    }
     public LabelServiceImpl(){
-        labelRepository = new LabelRepositoryImpl();
+       labelRepository = new LabelRepositoryImpl();
     }
 
     @Override

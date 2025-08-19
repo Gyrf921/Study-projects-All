@@ -8,11 +8,14 @@ import org.oladushek.service.PostService;
 
 import java.util.List;
 
-@AllArgsConstructor
+
 public class PostServiceImpl implements PostService {
 
     private final PostRepository postRepository;
 
+    public PostServiceImpl(PostRepository postRepository) {
+        this.postRepository = postRepository;
+    }
     public PostServiceImpl(){
         postRepository = new PostRepositoryImpl();
     }

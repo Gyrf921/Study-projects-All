@@ -1,7 +1,7 @@
 package org.oladushek.controller;
 
-import org.oladushek.controller.dto.WriterDTO;
-import org.oladushek.controller.dto.mapper.WriterMapper;
+import org.oladushek.dto.WriterDTO;
+import org.oladushek.mapper.WriterMapper;
 import org.oladushek.entity.PostEntity;
 import org.oladushek.entity.WriterEntity;
 import org.oladushek.service.PostService;
@@ -13,7 +13,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.Predicate;
 
-public class WriterController implements GenericController<WriterDTO, Long> {
+public class WriterController {
     private final WriterMapper writerMapper;
     private final PostService postService;
     private final WriterService writerService;
@@ -25,19 +25,18 @@ public class WriterController implements GenericController<WriterDTO, Long> {
     }
 
 
-    @Override
+
     public WriterDTO getById(Long id) {
         return writerMapper.mapToDTO(writerService.getById(id));
     }
 
-    @Override
+
     public List<WriterDTO> getAll() {
         return writerService.getAll().stream()
                 .map(writerMapper::mapToDTO)
                 .toList();
     }
 
-    @Override
     public void delete(Long id) {
         writerService.delete(id);
     }
