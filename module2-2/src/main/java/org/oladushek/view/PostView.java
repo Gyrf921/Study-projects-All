@@ -41,7 +41,7 @@ public class PostView {
                 case "4" -> create();
                 case "5" -> update();
                 case "6" -> delete();
-                case "7" -> running = false;
+                case "7", "exit", "Exit" -> running = false;
                 default -> System.out.println("Invalid input.");
             }
         }

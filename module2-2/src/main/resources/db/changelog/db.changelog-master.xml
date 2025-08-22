@@ -12,4 +12,14 @@
         <tagDatabase tag="v-1.0.0"/>
     </changeSet>
     <include file="v-1.0.0/10.08.2025-changelog-v.1.0.0.xml" relativeToChangelogFile="true"/>
+
+    <changeSet id="21.08.2025-change-posts-field" author="oladushek">
+        <tagDatabase tag="v-1.0.1"/>
+    </changeSet>
+    <include file="v-1.0.1/21.08.2025-changelog-v.1.0.1.xml" relativeToChangelogFile="true"/>
+
+    <changeSet id="22.08.2025-change-fk-writers-to-posts" author="oladushek">
+        <tagDatabase tag="v-1.0.2"/>
+    </changeSet>
+    <include file="v-1.0.2/22.08.2025-changelog-v.1.0.2.xml" relativeToChangelogFile="true"/>
 </databaseChangeLog>

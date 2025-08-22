@@ -6,6 +6,7 @@ import org.oladushek.repository.PostRepository;
 import org.oladushek.repository.impl.PostRepositoryImpl;
 import org.oladushek.service.PostService;
 
+import java.util.Collection;
 import java.util.List;
 
 
@@ -33,6 +34,11 @@ public class PostServiceImpl implements PostService {
     @Override
     public List<PostEntity> getXNewCreated(int count) {
         return postRepository.findXNew(count);
+    }
+
+    @Override
+    public List<PostEntity> getAllWithoutWriter() {
+        return postRepository.findAllWithoutWriter();
     }
 
     @Override

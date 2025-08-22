@@ -32,7 +32,6 @@ public class PostEntity extends UpdatedEntity {
     }
 
     public PostEntity(String content, List<LabelEntity> postLabelEntities) {
-        this.setId(-1L);
         this.content = content;
         this.postLabelEntities = postLabelEntities;
         this.status = PostStatus.UNDER_REVIEW;

@@ -16,6 +16,8 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
+import static org.oladushek.config.LiqubaseConfig.applyMigrations;
+
 @AllArgsConstructor
 public class JDBCConfig {
     private static volatile Connection connection;
@@ -36,7 +38,9 @@ public class JDBCConfig {
                                 PropertiesConfig.getProperty(DATABASE_URL),
                                 PropertiesConfig.getProperty(USER),
                                 PropertiesConfig.getProperty(PASSWORD));
+                        applyMigrations(localConnection);
                     }catch (SQLException e) {
+                        System.out.println(e.getMessage());
                         System.exit(-1);
                     }
                 }
@@ -45,6 +49,4 @@ public class JDBCConfig {
         return localConnection;
 
     }
-
-
 }

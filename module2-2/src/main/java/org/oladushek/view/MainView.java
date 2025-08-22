@@ -37,7 +37,7 @@ public class MainView {
                 case "1" -> writerView.handle();
                 case "2" -> postView.handle();
                 case "3" -> labelView.handle();
-                case "4" -> running = false;
+                case "4", "exit", "Exit" -> running = false;
                 default -> System.out.println("Invalid input.");
             }
         }

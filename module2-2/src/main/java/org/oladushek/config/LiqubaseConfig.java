@@ -10,14 +10,16 @@ import liquibase.exception.DatabaseException;
 import liquibase.exception.LiquibaseException;
 import liquibase.resource.ClassLoaderResourceAccessor;
 
+import java.sql.Connection;
+
 import static org.oladushek.config.JDBCConfig.getConnection;
 
 public class LiqubaseConfig {
 
-    static {
+    public static void applyMigrations(Connection connection) {
         try{
             Database database = DatabaseFactory.getInstance()
-                    .findCorrectDatabaseImplementation(new JdbcConnection(getConnection()));
+                    .findCorrectDatabaseImplementation(new JdbcConnection(connection));
             Liquibase liquibase = new Liquibase(
                     "db/changelog/db.changelog-master.xml",
                     new ClassLoaderResourceAccessor(),
@@ -25,6 +27,7 @@ public class LiqubaseConfig {
             );
             liquibase.update(new Contexts(), new LabelExpression());
         } catch (Throwable e) {
+            System.out.println(e.getMessage());
             System.exit(-1);
         }
 

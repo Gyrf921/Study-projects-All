@@ -3,7 +3,8 @@ package org.oladushek.repository.impl;
 import org.oladushek.config.StatementProviderUtils;
 import org.oladushek.entity.LabelEntity;
 import org.oladushek.entity.PostEntity;
-import org.oladushek.entity.enums.PostStatus;
+import org.oladushek.mapper.PostMapper;
+import org.oladushek.repository.LabelRepository;
 import org.oladushek.repository.PostRepository;
 
 import java.sql.*;
@@ -11,16 +12,25 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PostRepositoryImpl implements PostRepository {
+    private final LabelRepository labelRepository;
+
+    public PostRepositoryImpl(LabelRepository labelRepository) {
+        this.labelRepository = labelRepository;
+    }
+    public PostRepositoryImpl() {
+        this.labelRepository = new LabelRepositoryImpl();
+    }
 
     @Override
     public PostEntity findById(Long id) {
         try (PreparedStatement ps = StatementProviderUtils.getPreparedStatement(
-                "select p.* from posts p WHERE p.id = ?;")) {
+                "select p.*, l.id as label_id, l.name as label_name from posts p " +
+                        "left join post_label pl on p.id = pl.post_id " +
+                        "left join labels l on l.id = pl.label_id" +
+                        " WHERE p.id = ?;")) {
             ps.setLong(1, id);
-            ResultSet rs = ps.executeQuery();
-            if (rs.next()) {
-                return mapPost(rs);
-            }
+
+            return PostMapper.mapResultSetToPostEntity(ps.executeQuery());
         } catch (SQLException e) {
             System.out.println("Problem with SQL query (findById): " + e.getMessage());
         }
@@ -31,30 +41,44 @@ public class PostRepositoryImpl implements PostRepository {
     public List<PostEntity> findXNew(int count) {
         List<PostEntity> posts = new ArrayList<>();
         try (PreparedStatement ps = StatementProviderUtils.getPreparedStatement(
-                "select p.* from posts p "+
+                "select p.*, l.id as label_id, l.name as label_name from posts p " +
+                        "left join post_label pl on p.id = pl.post_id " +
+                        "left join labels l on l.id = pl.label_id" +
                         "ORDER BY created DESC LIMIT ?;")) {
             ps.setInt(1, count);
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                posts.add(mapPost(rs));
-            }
+            posts = PostMapper.mapResultSetToList(ps.executeQuery());
         } catch (SQLException e) {
             System.out.println("Problem with SQL query (findXNew): " + e.getMessage());
         }
         return posts;
     }
 
+
     @Override
     public List<PostEntity> findAll() {
         List<PostEntity> posts = new ArrayList<>();
         try (Statement st = StatementProviderUtils.getStatement()) {
             ResultSet rs = st.executeQuery(
-                    "select p.*, l.name from posts p " +
-                            "inner join post_label pl on p.id = pl.post_id " +
-                            "inner join labels l on l.id = pl.label_id; ");
-            while (rs.next()) {
-                posts.add(mapPost(rs));
-            }
+                    "select p.*, l.id as label_id, l.name as label_name from posts p " +
+                            "left join post_label pl on p.id = pl.post_id " +
+                            "left join labels l on l.id = pl.label_id; ");
+            posts = PostMapper.mapResultSetToList(rs);
+        } catch (SQLException e) {
+            System.out.println("Problem with SQL query (findAll): " + e.getMessage());
+        }
+        return posts;
+    }
+
+    @Override
+    public List<PostEntity> findAllWithoutWriter() {
+        List<PostEntity> posts = new ArrayList<>();
+        try (Statement st = StatementProviderUtils.getStatement()) {
+            ResultSet rs = st.executeQuery(
+                    "select p.*, l.id as label_id, l.name as label_name from posts p " +
+                            "left join post_label pl on p.id = pl.post_id " +
+                            "left join labels l on l.id = pl.label_id " +
+                            "where p.writer_id is null ; ");
+            posts = PostMapper.mapResultSetToList(rs);
         } catch (SQLException e) {
             System.out.println("Problem with SQL query (findAll): " + e.getMessage());
         }
@@ -63,46 +87,95 @@ public class PostRepositoryImpl implements PostRepository {
 
     @Override
     public PostEntity save(PostEntity postEntity) {
-        try (PreparedStatement ps = StatementProviderUtils.getPreparedStatement(
-                "INSERT INTO posts (content, status) VALUES (?, ?)")) {
+        //у нас один connection, спокойно можем использовать labelRepository и не громоздить кучу кода
+        Connection connection;
+        try {
+            connection = StatementProviderUtils.getConnection();
+            connection.setAutoCommit(false);
+            Savepoint savepointOne = connection.setSavepoint("SavepointOne");
 
-            ps.setString(1, postEntity.getContent());
-            ps.setString(2, postEntity.getStatus().name());
+            try (PreparedStatement ps = StatementProviderUtils.getPreparedStatementWithKey("INSERT INTO posts (content, status, writer_id) VALUES (?, ?, null)")) {
+                //Сохраняем новый пост
+                ps.setString(1, postEntity.getContent());
+                ps.setString(2, postEntity.getStatus().name());
+                ps.executeUpdate();
+                Long savedId = getIdFromKey(ps);
 
-            ps.executeUpdate();
+                //Сохраняем лейблы и привязываем их к постам
+                savePostLabelsLink(savedId, postEntity.getPostLabelEntities());
 
-            // Получим id новой записи
-            try (Statement st = StatementProviderUtils.getStatement();
-                 ResultSet rs = st.executeQuery("SELECT LAST_INSERT_ID()")) {
-                if (rs.next()) {
-                    postEntity.setId(rs.getLong(1));
-                }
+                connection.commit();
+                connection.setAutoCommit(true);
+                return findById(savedId);
+            } catch (SQLException e) {
+                System.out.println(e.getMessage());
+                System.out.println("SQLException. Executing rollback to savepoint...");
+                connection.rollback(savepointOne);
             }
-
-            //return new LabelEntity((long) findAll().size(), labelEntity.getName());
-            saveLabelsForPost(postEntity);
-            return postEntity;
         } catch (SQLException e) {
             System.out.println("Problem with SQL query (save): " + e.getMessage());
         }
+
         return null;
     }
 
+
+
     @Override
-    public PostEntity update(PostEntity postEntity) {
-        try (PreparedStatement ps = StatementProviderUtils.getPreparedStatement(
-                "UPDATE posts SET content = ?, status = ? WHERE id = ?")) {
+    public void savePostLabelsLink(Long postIdForSave, List<LabelEntity> labels) {
+        if (postIdForSave != null) {
+            if (!labels.isEmpty()) {
+                for (LabelEntity label : labels){
+                    savePostLabelLink(postIdForSave, label.getId());
+                }
+            }
+        }
+    }
 
-            ps.setString(1, postEntity.getContent());
-            ps.setString(2, postEntity.getStatus().name());
-            ps.setLong(3, postEntity.getId());
 
+    @Override
+    public void updateWriterLink(Long postIdForSave, Long writerIdForSave) {
+        try (PreparedStatement ps = StatementProviderUtils.getPreparedStatement("UPDATE posts SET writer_id = ? WHERE id = ?")) {
+            ps.setLong(1, writerIdForSave);
+            ps.setLong(2, postIdForSave);
             ps.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println("Problem with SQL query (update): " + e.getMessage());
+        }
+    }
 
-            deleteLabelsForPost(postEntity.getId());
-            saveLabelsForPost(postEntity);
+    @Override
+    public PostEntity update(PostEntity postForUpdate) {
+        //у нас один connection, спокойно можем использовать labelRepository и не громоздить кучу кода
+        Connection connection;
+        try {
+            connection = StatementProviderUtils.getConnection();
+            connection.setAutoCommit(false);
+            Savepoint savepointOne = connection.setSavepoint("SavepointOne");
 
-            return postEntity;
+            try (PreparedStatement ps = StatementProviderUtils.getPreparedStatement("UPDATE posts SET content = ?, status = ? WHERE id = ?")) {
+                //Сохраняем новый пост
+                ps.setString(1, postForUpdate.getContent());
+                ps.setString(2, postForUpdate.getStatus().name());
+                ps.setLong(3, postForUpdate.getId());
+                ps.executeUpdate();
+
+                //отправить на сохранение только те, каких ещё нет
+                PostEntity savedPostEntity = findById(postForUpdate.getId());
+
+                List<LabelEntity> labelToSave = postForUpdate.getPostLabelEntities().stream()
+                        .filter(labelForUpdate -> !savedPostEntity.getPostLabelEntities()
+                                .contains(labelForUpdate)).toList();
+
+                savePostLabelsLink(postForUpdate.getId(), labelToSave);
+
+                connection.commit();
+                connection.setAutoCommit(true);
+                return findById(postForUpdate.getId());
+            } catch (SQLException e) {
+                System.out.println("SQLException. Executing rollback to savepoint...");
+                connection.rollback(savepointOne);
+            }
         } catch (SQLException e) {
             System.out.println("Problem with SQL query (update): " + e.getMessage());
         }
@@ -110,75 +183,39 @@ public class PostRepositoryImpl implements PostRepository {
     }
 
     @Override
-    public void deleteById(Long id) {
+    public void deleteById(Long postId) {
         try (PreparedStatement ps = StatementProviderUtils.getPreparedStatement(
                 "DELETE FROM posts WHERE id = ?")) {
-            ps.setLong(1, id);
+            ps.setLong(1, postId);
             ps.executeUpdate();
         } catch (SQLException e) {
             System.out.println("Problem with SQL query (deleteById): " + e.getMessage());
         }
     }
 
-    private PostEntity mapPost(ResultSet rs) throws SQLException {
-        PostEntity post = new PostEntity();
-        System.out.println(rs.getMetaData().getColumnName(1));
-        System.out.println(rs.getMetaData().getColumnName(2));
-        System.out.println(rs.getMetaData().getColumnName(3));
-        System.out.println(rs.getMetaData().getColumnName(4));
-        System.out.println(rs.getMetaData().getColumnName(5));
-        System.out.println(rs.getMetaData().getColumnName(6));
-        System.out.println(rs.getMetaData().getColumnName(7));
-
-
-        post.setId(rs.getLong("id"));
-        post.setContent(rs.getString("content"));
-        post.setStatus(PostStatus.valueOf(rs.getString("status")));
-        post.setCreated(rs.getTimestamp("created").toLocalDateTime());
-        post.setUpdated(rs.getTimestamp("updated").toLocalDateTime());
-        //post.setPostLabelEntities((List<LabelEntity>) rs.getArray("labels"));
-        post.setPostLabelEntities(findLabelsByPostId(post.getId()));
-        return post;
-    }
-
-    private List<LabelEntity> findLabelsByPostId(Long postId) {
-        List<LabelEntity> labels = new ArrayList<>();
-        try (PreparedStatement ps = StatementProviderUtils.getPreparedStatement(
-                "SELECT l.id, l.name FROM labels l " +
-                        "JOIN post_label pl ON l.id = pl.label_id " +
-                        "WHERE pl.post_id = ?")) {
+    private void savePostLabelLink(Long postId, Long labelId) {
+        try(PreparedStatement ps = StatementProviderUtils.getPreparedStatement("INSERT INTO post_label (post_id, label_id) VALUES (?, ?)")) {
             ps.setLong(1, postId);
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                labels.add(new LabelEntity(rs.getLong("id"), rs.getString("name")));
-            }
-        } catch (SQLException e) {
-            System.out.println("Problem with SQL query (findLabelsByPostId): " + e.getMessage());
-        }
-        return labels;
-    }
-
-    private void saveLabelsForPost(PostEntity postEntity) {
-        if (postEntity.getPostLabelEntities() == null) return;
-        for (LabelEntity label : postEntity.getPostLabelEntities()) {
-            try (PreparedStatement ps = StatementProviderUtils.getPreparedStatement(
-                    "INSERT INTO post_label (post_id, label_id) VALUES (?, ?)")) {
-                ps.setLong(1, postEntity.getId());
-                ps.setLong(2, label.getId());
-                ps.executeUpdate();
-            } catch (SQLException e) {
-                System.out.println("Problem with SQL query (saveLabelsForPost): " + e.getMessage());
-            }
-        }
-    }
-
-    private void deleteLabelsForPost(Long postId) {
-        try (PreparedStatement ps = StatementProviderUtils.getPreparedStatement(
-                "DELETE FROM post_label WHERE post_id = ?")) {
-            ps.setLong(1, postId);
+            ps.setLong(2, labelId);
             ps.executeUpdate();
-        } catch (SQLException e) {
-            System.out.println("Problem with SQL query (deleteLabelsForPost): " + e.getMessage());
+        }
+        catch (SQLException e) {
+            System.out.println("Problem with SQL query: " + e.getMessage());
         }
     }
+
+    private Long getIdFromKey(PreparedStatement ps) throws SQLException {
+        try (ResultSet rs = ps.getGeneratedKeys()) {
+            if (rs.next()) {
+                return rs.getLong(1);
+            }
+        }
+        return null;
+    }
+
+
+
+
+
+
 }

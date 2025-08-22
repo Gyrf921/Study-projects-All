@@ -35,7 +35,7 @@ public class LabelView {
                 case "3" -> create();
                 case "4" -> update();
                 case "5" -> delete();
-                case "6" -> running = false;
+                case "6", "exit", "Exit" -> running = false;
                 default -> System.out.println("Invalid input.");
             }
         }

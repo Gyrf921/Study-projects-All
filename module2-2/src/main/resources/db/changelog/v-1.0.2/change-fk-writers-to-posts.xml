@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="change-fk-writer-to-posts" author="oladushek">
+        <sql>
+            ALTER TABLE posts DROP FOREIGN KEY fk_post_writer;
+
+            ALTER TABLE posts ADD CONSTRAINT fk_post_writer FOREIGN KEY (writer_id) REFERENCES writers(id) ON DELETE SET NULL;
+        </sql>
+    </changeSet>
+</databaseChangeLog>

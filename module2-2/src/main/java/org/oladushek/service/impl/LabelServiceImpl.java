@@ -1,15 +1,12 @@
 package org.oladushek.service.impl;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import org.oladushek.entity.LabelEntity;
 import org.oladushek.repository.LabelRepository;
 import org.oladushek.repository.impl.LabelRepositoryImpl;
 import org.oladushek.service.LabelService;
 
 import java.util.List;
+import java.util.function.Predicate;
 
 public class LabelServiceImpl implements LabelService {
 
@@ -33,6 +30,15 @@ public class LabelServiceImpl implements LabelService {
     }
 
     @Override
+    public List<LabelEntity> getSelectedLabelByIdForPost(List<Long> labelsIdForNewPost) {
+        Predicate<LabelEntity> isSelected = (label) -> labelsIdForNewPost.stream()
+                .filter(selectedId -> label.getId().equals(selectedId))
+                .findAny().orElse(null) != null;
+
+        return getAll().stream().filter(isSelected).toList();
+    }
+
+    @Override
     public LabelEntity create(LabelEntity labelEntity) {
         return labelRepository.save(labelEntity);
     }
@@ -52,4 +58,7 @@ public class LabelServiceImpl implements LabelService {
     public void delete(Long idToDelete) {
         labelRepository.deleteById(idToDelete);
     }
+
+
+
 }

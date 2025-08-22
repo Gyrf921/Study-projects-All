@@ -21,6 +21,7 @@ public class PropertiesConfig {
         try(InputStream input = PropertiesConfig.class.getClassLoader().getResourceAsStream("application.properties")){
             PROPERTIES.load(input);
         } catch (IOException e) {
+            System.out.println(e.getMessage());
             System.exit(-1);
         }
     }

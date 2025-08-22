@@ -1,0 +1,32 @@
+plugins {
+    id("java")
+}
+
+group = "org.oladushek"
+version = "1.0-SNAPSHOT"
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compileOnly("org.projectlombok:lombok:$lombokVersion")
+    annotationProcessor("org.projectlombok:lombok:$lombokVersion")
+    testCompileOnly("org.projectlombok:lombok:$lombokVersion")
+    testAnnotationProcessor("org.projectlombok:lombok:$lombokVersion")
+
+    implementation("com.mysql:mysql-connector-j:$mysqlVersion")
+    implementation("org.liquibase:liquibase-core:$liquibaseVersion")
+
+    testImplementation("org.mockito:mockito-core:$mockitoVersion")
+    testImplementation("org.mockito:mockito-junit-jupiter:$mockitoVersion")
+
+    testImplementation(platform("org.junit:junit-bom:$junitVersion"))
+
+    testImplementation("org.junit.jupiter:junit-jupiter")
+}
+
+
+tasks.test {
+    useJUnitPlatform()
+}

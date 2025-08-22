@@ -39,6 +39,13 @@ public class PostController {
                 .toList();
     }
 
+    public List<PostDTO> getAllWithoutWriter() {
+        return postService.getAllWithoutWriter().stream()
+                .map(mapper::mapToDTO)
+                .toList();
+    }
+
+
     public List<PostDTO> getNewPosts(int count) {
         return postService.getXNewCreated(count).stream()
                 .map(mapper::mapToDTO)
@@ -46,7 +53,7 @@ public class PostController {
     }
 
     public PostDTO create(String content, List<Long> labelsIdForNewPost) {
-        List<LabelEntity> selectedLabelEntities = getSelectedLabelByIdForPost(labelsIdForNewPost);
+        List<LabelEntity> selectedLabelEntities = labelService.getSelectedLabelByIdForPost(labelsIdForNewPost);
         return mapper.mapToDTO(postService.create(new PostEntity(content, selectedLabelEntities)));
     }
 
@@ -54,7 +61,7 @@ public class PostController {
         PostEntity oldPostEntity = postService.getById(id);
         PostEntity newPostEntity = new PostEntity(id,
                 newContent.equals("exit") ? oldPostEntity.getContent() : newContent,
-                labelsId.isEmpty() ? Collections.emptyList() : getSelectedLabelByIdForPost(labelsId));
+                labelsId.isEmpty() ? Collections.emptyList() : labelService.getSelectedLabelByIdForPost(labelsId));
 
         return mapper.mapToDTO(postService.update(newPostEntity));
     }
@@ -64,11 +71,4 @@ public class PostController {
         postService.delete(id);
     }
 
-    private List<LabelEntity> getSelectedLabelByIdForPost(List<Long> labelsIdForNewPost) {
-        Predicate<LabelEntity> isSelected = (label) -> labelsIdForNewPost.stream()
-                .filter(selectedId -> label.getId().equals(selectedId))
-                .findAny().orElse(null) != null;
-
-        return labelService.getAll().stream().filter(isSelected).toList();
-    }
 }
