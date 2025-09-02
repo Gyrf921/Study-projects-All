@@ -1,5 +1,3 @@
-#TODO Докерфайл и сделать всё в докере
-
 services:
   db:
     image: mysql:8.0
