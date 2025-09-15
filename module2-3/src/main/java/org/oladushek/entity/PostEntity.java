@@ -55,4 +55,14 @@ public class PostEntity extends BaseEntity {
         this.writer = writer;
         this.labels = labels;
     }
+
+    @Override
+    public String toString() {
+        return "PostEntity{" +
+                "content='" + content + '\'' +
+                ", created=" + created +
+                ", updated=" + updated +
+                ", status=" + status +
+                '}';
+    }
 }

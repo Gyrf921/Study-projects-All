@@ -1,5 +1,6 @@
 package org.oladushek.repository.impl;
 
+import org.hibernate.Hibernate;
 import org.oladushek.config.HibernateConfig;
 import org.oladushek.entity.LabelEntity;
 import org.oladushek.entity.PostEntity;
@@ -14,7 +15,9 @@ public class PostRepositoryImpl implements PostRepository {
     @Override
     public List<PostEntity> findXNew(int count) {
         return HibernateConfig.getSessionFactory().fromTransaction(session -> {
-            String query = "from PostEntity p order by p.created desc";
+            String query = "from PostEntity p "  +
+                    " join fetch p.labels \n" +
+                    " join fetch p.writer order by p.created desc";
             return session.createSelectionQuery(query, PostEntity.class)
                     .setMaxResults(count)
                     .getResultList();
@@ -25,7 +28,12 @@ public class PostRepositoryImpl implements PostRepository {
     @Override
     public PostEntity findById(Long id) {
         return HibernateConfig.getSessionFactory()
-                .fromTransaction(session -> session.find(PostEntity.class, id));
+                .fromTransaction(session -> {
+                    PostEntity post = session.find(PostEntity.class, id);
+                    Hibernate.initialize(post.getWriter());
+                    Hibernate.initialize(post.getLabels());
+                    return post;
+                });
     }
 
     @Override

@@ -43,4 +43,12 @@ public class WriterEntity extends BaseEntity {
         this.lastName = lastName;
         this.posts = new ArrayList<>();
     }
+
+    @Override
+    public String toString() {
+        return "WriterEntity{" +
+                "firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                '}';
+    }
 }

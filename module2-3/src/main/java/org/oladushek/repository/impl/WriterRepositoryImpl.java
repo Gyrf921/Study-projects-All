@@ -1,5 +1,6 @@
 package org.oladushek.repository.impl;
 
+import org.hibernate.Hibernate;
 import org.oladushek.config.HibernateConfig;
 import org.oladushek.entity.PostEntity;
 import org.oladushek.entity.WriterEntity;
@@ -13,13 +14,17 @@ public class WriterRepositoryImpl implements WriterRepository {
     @Override
     public WriterEntity findById(Long id) {
         return HibernateConfig.getSessionFactory()
-                .fromTransaction(session -> session.find(WriterEntity.class, id));
+                .fromTransaction(session -> {
+                    WriterEntity writer = session.find(WriterEntity.class, id);
+                    Hibernate.initialize(writer.getPosts());
+                    return writer;
+                });
     }
 
     @Override
     public List<WriterEntity> findAll() {
         return HibernateConfig.getSessionFactory().fromTransaction(session -> {
-            String query = "from WriterEntity w order by w.id desc";
+            String query = "from WriterEntity w join fetch w.posts order by w.id desc";
             return session.createSelectionQuery(query, WriterEntity.class)
                     .getResultList();
         });

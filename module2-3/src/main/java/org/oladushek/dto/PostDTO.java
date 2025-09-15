@@ -9,4 +9,16 @@ import java.util.List;
 
 public record PostDTO (Long id, String content, LocalDateTime created, LocalDateTime updated, List<LabelEntity> postLabelEntities, WriterEntity writerEntity, PostStatus status) {
 
+    @Override
+    public String toString() {
+        return "PostDTO{" +
+                "id=" + id +
+                ", content='" + content + '\'' +
+                ", created=" + created +
+                ", updated=" + updated +
+                ", postLabelEntities=" + postLabelEntities +
+                ", writerEntity=" + writerEntity +
+                ", status=" + status +
+                '}';
+    }
 }
