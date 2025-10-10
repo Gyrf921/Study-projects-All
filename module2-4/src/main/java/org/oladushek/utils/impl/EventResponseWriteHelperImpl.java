@@ -3,6 +3,7 @@ package org.oladushek.utils.impl;
 import com.google.gson.Gson;
 import jakarta.servlet.http.HttpServletResponse;
 import org.oladushek.dto.EventDto;
+import org.oladushek.dto.FileDto;
 import org.oladushek.dto.UserDto;
 import org.oladushek.entity.EventEntity;
 import org.oladushek.entity.UserEntity;
@@ -24,7 +25,7 @@ public class EventResponseWriteHelperImpl implements ResponseWriteHelper<EventDt
         resp.setCharacterEncoding("UTF-8");
 
         try (PrintWriter out = resp.getWriter()) {
-            out.print(gson.toJson(new UserDto(answer)));
+            out.print(gson.toJson(answer));
         }
     }
 
@@ -33,19 +34,20 @@ public class EventResponseWriteHelperImpl implements ResponseWriteHelper<EventDt
         resp.setContentType("application/json");
         resp.setCharacterEncoding("UTF-8");
         try (PrintWriter out = resp.getWriter()) {
-
-
+            out.print(Arrays.toString(answers.stream()
+                    .map(event -> gson.toJson(event))
+                    .toArray()));
         }
 
     }
 
     @Override
-    public void writeJsonResponse(HttpServletResponse resp, Object id) throws IOException {
+    public void writeJsonResponse(HttpServletResponse resp, Object obj) throws IOException {
         resp.setContentType("application/json");
         resp.setCharacterEncoding("UTF-8");
 
         try (PrintWriter out = resp.getWriter()) {
-            out.print(id);
+            out.print(obj);
         }
     }
 
