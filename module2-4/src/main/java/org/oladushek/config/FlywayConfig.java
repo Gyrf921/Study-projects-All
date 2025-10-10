@@ -9,6 +9,9 @@ public class FlywayConfig {
     private static final String USER= "hibernate.connection.username";
     private static final String PASSWORD = "hibernate.connection.password";
 
+    static {
+        applyMigrations();
+    }
 
     public static void applyMigrations() {
         try{
