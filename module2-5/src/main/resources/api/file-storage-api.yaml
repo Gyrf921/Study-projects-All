@@ -1,0 +1,63 @@
+openapi: 3.0.0
+info:
+  title: File Storage S3 API
+  version: 1.0.0
+paths:
+  /files:
+    post:
+      summary: Upload a file to Yandex S3
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+      responses:
+        '201':
+          description: File uploaded successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/File'
+  /files/{id}:
+    get:
+      summary: Retrieve a file by ID
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successful retrieval of file
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/File'
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    File:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        location:
+          type: string
+        status:
+          type: string

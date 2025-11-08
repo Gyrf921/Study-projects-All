@@ -1,0 +1,14 @@
+spring:
+  application:
+    name: module2-5
+  jpa:
+    database: mysql
+  datasource:
+    url: jdbc:mysql://localhost:3306/module2-5_db
+    username: user
+    password: user
+
+minio:
+  endpoint: http://127.0.0.1:9000
+  accessKey: minioadmin
+  secretKey: minioadmin
