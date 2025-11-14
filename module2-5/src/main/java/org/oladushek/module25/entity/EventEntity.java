@@ -6,6 +6,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.oladushek.module25.entity.base.BaseEntity;
 import org.oladushek.module25.entity.base.EventStatus;
+import org.oladushek.module25.rest.dto.EventRequestDto;
 
 import java.time.LocalDateTime;
 
@@ -31,4 +32,7 @@ public class EventEntity extends BaseEntity {
     @Column(name = "timestamp", nullable = false)
     private LocalDateTime timestamp;
 
+    public EventEntity(EventRequestDto event) {
+        this.status = event.eventStatus();
+    }
 }

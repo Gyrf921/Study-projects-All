@@ -26,14 +26,12 @@ repositories {
 
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-security'
-    implementation 'org.springframework.boot:spring-boot-starter-web'
-    implementation("org.springframework.boot:spring-boot-starter-webflux")
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
+
+    implementation("org.springframework.boot:spring-boot-starter-webflux")
     implementation 'org.springframework.session:spring-session-core'
 
-    implementation 'org.springframework.boot:spring-boot-starter-data-r2dbc'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-    implementation "io.asyncer:r2dbc-mysql:$r2dbcMysqlVersion"
     runtimeOnly 'com.mysql:mysql-connector-j'
 
     implementation 'org.flywaydb:flyway-mysql'
@@ -41,6 +39,10 @@ dependencies {
     implementation "com.github.spotbugs:spotbugs-annotations:$googleSpotbugsVersion"
     implementation "io.minio:minio:$ioMinioVersion"
 
+    implementation "io.jsonwebtoken:jjwt-api:$jsonWebTokenVersion"
+    runtimeOnly "io.jsonwebtoken:jjwt-impl:$jsonWebTokenVersion"
+    runtimeOnly "io.jsonwebtoken:jjwt-jackson:$jsonWebTokenVersion"
+    implementation "jakarta.xml.bind:jakarta.xml.bind-api:$jaxbApiVersion"
     implementation "org.mapstruct:mapstruct:$mapStructVersion"
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
@@ -48,7 +50,6 @@ dependencies {
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
-    testImplementation 'io.projectreactor:reactor-test'
 }
 
 tasks.named('test') {
